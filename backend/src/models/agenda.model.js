@@ -4,24 +4,23 @@ const agendaSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        trim: true,
     },
     description: {
         type: String,
-        required: true,
+        default: '',
+        trim: true,
     },
-    date: {
-        type: Date,
-        required: true,
-    },
-    time: {
+    color: {
         type: String,
-        required: true,
+        default: '#2563EB',
     },
-    status: {
-        type: String,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
-        enum: ['pending', 'in_progress', 'completed', 'cancelled'],
+        index: true,
     },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Agenda', agendaSchema);
