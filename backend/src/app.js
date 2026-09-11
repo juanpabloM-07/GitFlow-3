@@ -64,6 +64,11 @@ app.use((error, req, res, next) => {
 // ---------------------------------------------------------------------------
 // ARRANQUE
 // ---------------------------------------------------------------------------
+// En Vercel no existe un proceso que quede escuchando: la plataforma importa
+// este archivo y llama a `app` como funcion serverless. Por eso solo hacemos
+// `listen` cuando corremos en local o en un host tipo Render.
+const isServerless = Boolean(process.env.VERCEL);
+
 // Primero conectamos a Mongo y recien despues escuchamos. Asi el servidor nunca
 // acepta peticiones que no va a poder responder.
 const start = async () => {
@@ -81,6 +86,13 @@ const start = async () => {
     }
 };
 
-start();
+if (isServerless) {
+    // Cada invocacion reutiliza la conexion si el contenedor sigue vivo.
+    connectDB().catch((error) => {
+        console.error('No se pudo conectar a MongoDB:', error.message);
+    });
+} else {
+    start();
+}
 
 module.exports = app;

@@ -4,17 +4,25 @@ import 'package:flutter/material.dart';
 // ---------------------------------------------------------------------------
 // CONFIGURACION DE RED
 // ---------------------------------------------------------------------------
-// El host del backend cambia segun donde corre la app:
+// Por defecto la app apunta al backend desplegado en Render. Para desarrollo
+// local se pone `useProduction = false` y ahi el host cambia segun donde corre:
 //
 //   - Emulador de Android -> 10.0.2.2 (asi ve el emulador al localhost de la PC)
 //   - Chrome / Edge / Windows -> localhost
 //   - Celular fisico -> la IP de la PC en la red wifi (ej: 192.168.0.10)
 //
-// Por eso no se puede dejar una sola direccion fija: si la app corre en el
-// escritorio apuntando a 10.0.2.2, la peticion se cuelga hasta el timeout.
+// Por eso en local no se puede dejar una sola direccion fija: si la app corre
+// en el escritorio apuntando a 10.0.2.2, la peticion se cuelga hasta el timeout.
 // ---------------------------------------------------------------------------
 class ApiConfig {
   ApiConfig._();
+
+  /// Backend desplegado. Sin barra final: las rutas ya empiezan con '/'.
+  static const String productionBaseUrl =
+      'https://gitflow3-backend.onrender.com/api';
+
+  /// En false, la app usa el backend local (ver `host` y `port`).
+  static const bool useProduction = true;
 
   static const int port = 3000;
 
@@ -22,7 +30,7 @@ class ApiConfig {
   /// Ejemplo: static const String? manualHost = '192.168.0.10';
   static const String? manualHost = null;
 
-  /// Host elegido automaticamente segun la plataforma.
+  /// Host elegido automaticamente segun la plataforma (solo en local).
   static String get host {
     if (manualHost != null) return manualHost!;
     if (kIsWeb) return 'localhost';
@@ -31,10 +39,18 @@ class ApiConfig {
     return 'localhost';
   }
 
-  static String get baseUrl => 'http://$host:$port/api';
+  static String get baseUrl {
+    if (useProduction) return productionBaseUrl;
+
+    return 'http://$host:$port/api';
+  }
 
   /// Si el servidor no contesta en este tiempo, cortamos y avisamos al usuario.
-  static const Duration timeout = Duration(seconds: 10);
+  /// En Render el plan gratuito duerme el servicio, y el primer pedido puede
+  /// tardar cerca de un minuto en despertarlo: por eso el timeout es mas largo
+  /// contra produccion que contra el backend local.
+  static const Duration timeout =
+      useProduction ? Duration(seconds: 60) : Duration(seconds: 10);
 
   // Rutas del backend.
   static const String login = '/auth/login';
