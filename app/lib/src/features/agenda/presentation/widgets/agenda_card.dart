@@ -77,6 +77,19 @@ class AgendaCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // Pista visual de que la tarjeta entera abre la agenda: sin
+                  // esto el unico control que se ve es el menu de la derecha.
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Tooltip(
+                      message: 'Abrir agenda',
+                      child: Icon(
+                        Icons.chevron_right_rounded,
+                        size: 20,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ),
                   PopupMenuButton<String>(
                     icon: const Icon(
                       Icons.more_vert_rounded,

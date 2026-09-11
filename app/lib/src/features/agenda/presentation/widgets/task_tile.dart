@@ -53,17 +53,36 @@ class TaskTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      task.title,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: isCompleted
-                            ? AppColors.textMuted
-                            : AppColors.textPrimary,
-                        decoration:
-                            isCompleted ? TextDecoration.lineThrough : null,
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            task.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: isCompleted
+                                  ? AppColors.textMuted
+                                  : AppColors.textPrimary,
+                              decoration: isCompleted
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        // Pista visual de que tocar la fila abre el formulario.
+                        const Tooltip(
+                          message: 'Abrir tarea',
+                          child: Icon(
+                            Icons.chevron_right_rounded,
+                            size: 18,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
                     ),
                     if (task.description.isNotEmpty) ...[
                       const SizedBox(height: 3),
